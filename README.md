@@ -15,5 +15,6 @@ The progress report need not be onerous. It can be a few paragraphs or a page, s
 Sending the report will make your work (and meetings with other team members) much more productive, because it will force you to think about your work in a manner concretely enough to write down, and it will give others an opportunity to reflect on it before the meeting proper. The progress report also enables others to know what you are doing. Frequently, the progress report prompt other group members to respond with ideas or suggestions of their own, which can help get you unstuck or give you additional avenues to explore.
 
 ## Tools
-github : Research Progress
-google calendar : Share Calendar
+Research Progress : github
+
+Share Calendar : google calendar 
