@@ -74,28 +74,15 @@ def callback():
             continue
 
         if "/today all" in event.message.text:
-            store = file.Storage('credentials.json')
-            creds = store.get()
-
-            if not creds or creds.invalid:
-                flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
-                creds = tools.run_flow(flow, store)
-            
-            service = build('calendar', 'v3', http=creds.authorize(Http()))
-            now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-
-            events_result = service.events().list(calendarId='primary', timeMin=now,
-                                        maxResults=10, singleEvents=True,
-                                        orderBy='startTime').execute()
-            events = events_result.get('items', [])
-
-
-            for event in events:
-                start = event['start'].get('dateTime', event['start'].get('date'))
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=str(start)+'/'+event['summary'])
-                )
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='개발 중입니다')
+            )
+        elif "/" in event.message.text:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='개발 중입니다')
+            )
 
     return 'OK'
 
