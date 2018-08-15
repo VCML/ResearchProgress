@@ -1,3 +1,5 @@
 line-bot-sdk
 Flask
 gunicorn
+google-api-python-client
+oauth2client

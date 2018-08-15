@@ -18,6 +18,11 @@ import os
 import sys
 from argparse import ArgumentParser
 
+import datetime
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
+
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookParser
@@ -28,6 +33,8 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+
+SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 
 app = Flask(__name__)
 
@@ -66,11 +73,29 @@ def callback():
         if not isinstance(event.message, TextMessage):
             continue
 
-        if "to노예" in event.message.text:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=event.message.text)
-            )
+        if "/today all" in event.message.text:
+            store = file.Storage('credentials.json')
+            creds = store.get()
+
+            if not creds or creds.invalid:
+                flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
+                creds = tools.run_flow(flow, store)
+            
+            service = build('calendar', 'v3', http=creds.authorize(Http()))
+            now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+
+            events_result = service.events().list(calendarId='primary', timeMin=now,
+                                        maxResults=10, singleEvents=True,
+                                        orderBy='startTime').execute()
+            events = events_result.get('items', [])
+
+
+            for event in events:
+                start = event['start'].get('dateTime', event['start'].get('date'))
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=str(start)+'/'+event['summary'])
+                )
 
     return 'OK'
 
